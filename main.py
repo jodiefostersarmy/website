@@ -1,41 +1,28 @@
-from flask import Flask, request, jsonify
-app = Flask(__name__)
+from flask import Flask, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+from marshmallow.exceptions import ValidationError
 
-@app.route("/books", methods=["GET"])
-def book_index():
-    return jsonify({
-        "books": "books",
-        "titles": [
-            "hello",
-            "world",
-            "biggie"
-        ]
-    })
+db = SQLAlchemy()
+ma = Marshmallow()
 
-@app.route("/books", methods=["POST"])
-def book_create():
-    #Create a new book
-    pass
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object("default_settings.app_config")
 
-@app.route("/books/<int:id>", methods=["GET"])
-def book_show(id):
-    #Return a single book
-    pass
+    db.init_app(app)
+    ma.init_app(app)
 
-@app.route("/books/<int:id>", methods=["PUT", "PATCH"])
-def book_update(id):
-    #Update a book
-    pass
+    from commands import db_commands
+    app.register_blueprint(db_commands)
 
-@app.route("/books/<int:id>", methods=["DELETE"])
-def book_delete(id):
-    #Delete a book
-    pass
+    from controllers import registerable_controllers
 
-@app.route("/")
-def home_page():
-    return "This will be my landing page for my website/portfolio site"
+    for controller in registerable_controllers:
+        app.register_blueprint(controller)
 
-@app.route('/contact')
-def contact_page():
-    return "contact page"
+    @app.errorhandler(ValidationError)
+    def handle_bad_request(error):
+        return (jsonify(error.messages), 400)
+
+    return app
