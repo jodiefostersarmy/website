@@ -1,19 +1,26 @@
 import unittest
-from main import create_app
+from main import create_app, db
 
 class TestPosts(unittest.TestCase):
     @classmethod
     def setUp(cls):
-        print("setup ran")
+        cls.app = create_app()
+        cls.app_context = cls.app.app_context()
+        cls.app_context.push()
+        cls.client = cls.app.test_client()
+        db.create_all()
+
+        runner = cls.app.test_cli_runner()
+        runner.invoke(args=["db", "seed"])
 
     @classmethod
     def tearDown(cls):
-        print("teardown ran")
+        db.session.remove()
+        db.drop_all()
+        cls.app_context.pop()
 
     def test_post_index(self):
-        app = create_app()
-        client = app.test_client()
-        response = client.get("/posts/")
+        response = self.client.get("/posts/")
 
         data = response.get_json()
 
