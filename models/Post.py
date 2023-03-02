@@ -1,4 +1,5 @@
 from main import db
+from models.PostImage import PostImage
 
 class Post(db.Model):
     __tablename__ = "posts"
