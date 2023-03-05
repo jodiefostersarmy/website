@@ -41,6 +41,8 @@ def post_show(id):
     post = Post.query.get(id)
     return jsonify(post_schema.dump(post))
 
+
+#TODO: This update function may be broken
 @posts.route("/<int:id>", methods=["PUT", "PATCH"])
 @jwt_required()
 def post_update(id):
