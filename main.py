@@ -17,10 +17,9 @@ def create_app():
     
     app.config.from_object("default_settings.app_config")
 
-    #TODO: Logging for production errors
-    # if app.config["ENV"] == "production":
-    #     from log_handlers import file_handler
-    #     app.logger.addHandler(file_handler)
+    if app.config["ENV"] == "production":
+        from log_handlers import file_handler
+        app.logger.addHandler(file_handler)
 
     db.init_app(app)
     ma.init_app(app)
