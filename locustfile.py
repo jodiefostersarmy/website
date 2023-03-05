@@ -44,15 +44,15 @@ class QuickstartUser(HttpUser):
             if response.status_code < 400:
                 self.posts.append(response.json()["id"])
     
-    @task(2)
-    def update_post(self):
-        if len(self.posts) > 0 and self.token:
-            post_id = random.choice(self.posts)
-            self.client.put(
-                f"/posts/{post_id}", 
-                json={ "title": self.faker.catch_phrase() },
-                headers={ "Authorization": f"Bearer {self.token}"}
-            )
+    # @task(2)
+    # def update_post(self):
+    #     if len(self.posts) > 0 and self.token:
+    #         post_id = random.choice(self.posts)
+    #         self.client.put(
+    #             f"/posts/{post_id}", 
+    #             json={ "title": self.faker.catch_phrase() },
+    #             headers={ "Authorization": f"Bearer {self.token}"}
+    #         )
     
     @task(2)
     def delete_post(self):
