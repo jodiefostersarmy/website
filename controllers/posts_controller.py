@@ -56,7 +56,7 @@ def post_update(id):
     posts = Post.query.filter_by(id=id, user=user.id)
 
     if posts.count() != 1:
-        return abort(401, description="Unauthorised to update this book")
+        return abort(401, description="Unauthorised to update this post")
 
     posts.update(post_fields)
     db.session.commit()
